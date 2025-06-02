@@ -10,8 +10,6 @@ class Logger:
         
         self.dual_logger = self._setup_dual_logger()
         self.file_only_logger = self._setup_file_only_logger()
-
-        self.dual_logger.info('adokasd')
     
     def _setup_dual_logger(self):
         """Logger that outputs to both file and stdout"""
@@ -66,6 +64,7 @@ class Logger:
             self.file_only_logger.warning(message)
         else:
             self.file_only_logger.info(message)
+
     def log_file_with_stdout(self, message: str, level: int):
         if level == LoggingLevel.Debug:
             self.dual_logger.debug(message)

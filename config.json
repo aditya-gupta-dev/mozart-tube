@@ -1,0 +1,8 @@
+{
+    "ffmpegPath": null,
+    "ytdlpPath": "C:/Users/hyper/progs/yt-dlp/yt-dlp.exe",
+    "final-video-duration": 3600,
+    "youtube-api-key": "",
+    "asset-video-path": "./sample.mp4",
+    "output-directory": "output" 
+}
