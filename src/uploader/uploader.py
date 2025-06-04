@@ -44,7 +44,7 @@ class Uploader:
                     title=os.path.splitext(video_file)[0],
                     tags=[''],
                     description='idk',
-                    privacy_status='private'                    
+                    privacy_status='public'                    
                 )
 
         except Exception as e:
