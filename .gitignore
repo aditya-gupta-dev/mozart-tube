@@ -5,5 +5,4 @@ venv
 files
 output
 *.mp4
-config.json
-client_secrets.json
+*.json
