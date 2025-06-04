@@ -37,8 +37,6 @@ def main():
 
         video_editor.edit()
 
-        break
-
     uploader = Uploader(
         logger=logger,
         config_loader=config_loader,

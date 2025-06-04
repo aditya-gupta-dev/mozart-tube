@@ -43,7 +43,7 @@ class Uploader:
                     video_file=f'{items_dir}/{video_file}',
                     title=os.path.splitext(video_file)[0],
                     tags=[''],
-                    description='idk',
+                    description='Welcome to my youtube channel!!, Subscribe for trending songs daily!!',
                     privacy_status='public'                    
                 )
 
