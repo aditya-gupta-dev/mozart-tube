@@ -30,7 +30,11 @@ def main():
     
     links = video_downloader.get_links_from_file()
 
-    for link in links:
+    for index, link in enumerate(links):
+        
+        if index == len(links) - 1:
+            break
+
         video_downloader.download_video(link)
 
         video_editor = VideoEditor(

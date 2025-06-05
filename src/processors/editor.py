@@ -39,7 +39,7 @@ class VideoEditor():
             
                 return 'Viral Song'
             
-            self.logger.log_file_only(f'Youtube Responded with {response.json()}', LoggingLevel.Info)
+            self.logger.log_file_only(f'Youtube Response Headers with {response.headers}', LoggingLevel.Info)
             self.logger.log_file_only(f'Extracted Title {response.json()['items'][0]['snippet']['title']}', LoggingLevel.Info)
             
             return response.json()['items'][0]['snippet']['title']
