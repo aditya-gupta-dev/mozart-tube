@@ -122,15 +122,20 @@ class YouTubeUploader:
             
             self.logger.log_file_with_stdout(f"Video '{title}' uploaded successfully. Video ID: {response['id']}", LoggingLevel.Info)
             self.logger.log_file_with_stdout(f"URL: https://www.youtube.com/watch?v={response['id']}", LoggingLevel.Info)
+
+            return response['id']
             
         except HttpError as e:
             self.logger.log_file_with_stdout(f"HTTP error Check your internet connection", LoggingLevel.Error)
             self.logger.log_file_only(f"HTTP error {e.resp.status}: {e.content}", LoggingLevel.Error)
+
+            return None
             
         except Exception as e:
             self.logger.log_file_with_stdout(f'Fatal Error. Quitting...', LoggingLevel.Fatal)
             self.logger.log_file_only(f"Upload error: {str(e)}", LoggingLevel.Fatal)
-            return 
+            
+            return None 
         
     def _resumable_upload_with_progress(self, insert_request, total_size):
         """Handle resumable upload with tqdm progress bar"""
@@ -174,6 +179,23 @@ class YouTubeUploader:
         
         return response
     
+    def upload_thumbnail(self, video_id, thumbnail_path):
+        """Upload thumbnail for a video."""
+        if not self.youtube:
+            self.logger.log_file_with_stdout(f'authenticate your channel.', LoggingLevel.Fatal)
+            exit()
+
+        try:
+            self.logger.log_file_with_stdout(f"Uploading thumbnail: {os.path.basename(thumbnail_path)}", LoggingLevel.Info)
+            self.youtube.thumbnails().set(
+                videoId=video_id,
+                media_body=MediaFileUpload(thumbnail_path)
+            ).execute()
+            self.logger.log_file_with_stdout("Thumbnail uploaded successfully!", LoggingLevel.Error)
+        except Exception as e:
+            self.logger.log_file_with_stdout(f"Error uploading thumbnail: {e}", LoggingLevel.Error)
+    
+
     def _format_bytes(self, bytes_size):
         """Format bytes to human readable format"""
         for unit in ['B', 'KB', 'MB', 'GB']:

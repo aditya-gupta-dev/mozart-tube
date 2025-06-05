@@ -5,7 +5,8 @@ import re
 import os 
 import subprocess
 import math
-import time 
+import time
+import requests 
 
 class VideoEditor():
     def __init__(self, link: str, logger: Logger, configLoader: ConfigLoader):
@@ -80,7 +81,8 @@ class VideoEditor():
         self.merging_asset_and_audio_file()
         self.get_video_duration()
         self.generate_concat_demuxer_file()
-        self.render_final_output_video()                
+        self.render_final_output_video() 
+        self.download_original_thumbnail()               
 
     def convert_to_mp4(self):
         saved_dir = f'files/{self.video_id}'
@@ -306,7 +308,32 @@ class VideoEditor():
             self.logger.log_file_only(f'Error {e}.', LoggingLevel.Fatal)
             self.failed = True
 
+    def download_original_thumbnail(self):
+        output_dir = self.config_loader.get_output_directory()
+        video_id = self.get_video_id()
 
+        api_url = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+
+        try:
+            response = requests.get(api_url)
+            
+            if not response.ok or response.status_code == 404:
+                self.logger.log_file_with_stdout(f'Failed to request youtube. Status code :{response.status_code}', LoggingLevel.Error)
+                self.logger.log_file_with_stdout(f'Thumbnail JSON Response : {response.json()}', LoggingLevel.Error)
+            
+            else:
+                with open(f'{output_dir}/{video_id}/{video_id}.jpg', 'wb') as thumbnail_file:
+                    thumbnail_file.write(response.content)
+            
+            self.logger.log_file_with_stdout(f'Successfully downloaded thumbnail file : {output_dir}/{video_id}/{video_id}.jpg', LoggingLevel.Info)
+            
+        except requests.ConnectionError as conn_error:
+            self.logger.log_file_with_stdout(f'connection error while downloading thumbnail.', LoggingLevel.Fatal)
+            self.logger.log_file_only(f'Connection Error {conn_error}', LoggingLevel.Fatal)
+
+        except Exception as e:
+            self.logger.log_file_with_stdout(f'Unexpected error while parsing image.', LoggingLevel.Fatal)
+            self.logger.log_file_only(f'Thumbnail Download Error Details {e}.', LoggingLevel.Fatal)        
 
     def get_video_duration(self):
         if self.failed:

@@ -25,6 +25,12 @@ class Uploader:
             if "mp4" in item:
                 return item
         return None
+    
+    def get_thumbnail_file(self, items: list[str]):
+        for item in items:
+            if ".jpg" in item or ".png" in item:
+                return item 
+        return None
 
     def start_uploading_to_youtube(self):
         try:
@@ -34,18 +40,23 @@ class Uploader:
                 items = os.listdir(items_dir)
 
                 video_file = self.get_video_file(items)
+                thumbnail_file = self.get_thumbnail_file(items)
                 
                 if not video_file:
                     self.logger.log_file_with_stdout(f'No video found - Search at: {items_dir} Items: {items}', LoggingLevel.Error)
                     continue
 
-                self.youtube_uploader.upload_video(
+                uploaded_video_id = self.youtube_uploader.upload_video(
                     video_file=f'{items_dir}/{video_file}',
                     title=os.path.splitext(video_file)[0],
                     tags=[''],
                     description='Welcome to my youtube channel!!, Subscribe for trending songs daily!!',
                     privacy_status='public'                    
                 )
+
+                if uploaded_video_id and thumbnail_file:
+                    self.youtube_uploader.upload_thumbnail(uploaded_video_id, f'{items_dir}/{thumbnail_file}')
+
 
         except Exception as e:
             self.logger.log_file_with_stdout("Error occured at the ending", LoggingLevel.Error)
