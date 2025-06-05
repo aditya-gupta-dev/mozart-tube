@@ -4,8 +4,12 @@ from src.config import ConfigLoader
 from src.logger import Logger
 from src.uploader.youtube_uploader import YouTubeUploader
 from src.uploader.uploader import Uploader
+from src.utils import print_title
 
 def main():
+
+    print_title()
+
     logger = Logger()
     
     config_loader = ConfigLoader(logger=logger)
