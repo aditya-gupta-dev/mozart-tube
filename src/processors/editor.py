@@ -67,7 +67,7 @@ class VideoEditor():
 
         if len(sanitized_title) > required_title_length:
             extracted_title = f'{sanitized_title[:required_title_length]} {suffix}'
-            self.logger.log_file_only(f'Extracted title : {extracted_title}')
+            self.logger.log_file_only(f'Extracted title : {extracted_title}', LoggingLevel.Info)
 
             return f"{sanitized_title[:required_title_length]} {suffix}"
         else:
