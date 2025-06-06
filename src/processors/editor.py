@@ -13,6 +13,7 @@ class VideoEditor():
         self.link = link
         self.logger = logger 
         self.failed = False
+        self.already_as_mp4 = False
         self.final_output_video_duration: int = 30
         self.config_loader = configLoader
         self.video_id = self.get_video_id()
@@ -88,7 +89,8 @@ class VideoEditor():
         saved_dir = f'files/{self.video_id}'
         self.logger.log_file_with_stdout(f'Converting [ {saved_dir}/input.webm ] to mp4', LoggingLevel.Info)
        
-        if os.path.exists(f'{saved_dir}/input.mp4'): 
+        if os.path.exists(f'{saved_dir}/input.mp4'):
+            self.already_as_mp4 = True 
             self.logger.log_file_with_stdout(f'Video was already downloaded as .mp4, Skipping conversion', LoggingLevel.Info)
             return 
         
@@ -129,9 +131,15 @@ class VideoEditor():
             self.failed = True
     
     def extract_audio_from_video(self):
+        filename = 'input.webm'
+
         if self.failed:
             self.logger.log_file_with_stdout(f'previous step was failed quitting (extraction of audio) for this video entirely.', LoggingLevel.Error)
             return
+
+        if self.already_as_mp4:
+            filename = 'input.mp4'
+
 
         saved_dir = f'files/{self.video_id}'
         self.logger.log_file_with_stdout(f'Extracting audio from [ {saved_dir}/input.webm ]', LoggingLevel.Info)
@@ -144,7 +152,7 @@ class VideoEditor():
 
         try:
             process = subprocess.run(
-                args=[ffmpeg_path, '-i', f'{saved_dir}/input.webm', '-q:a', '0', '-map', 'a', f'{saved_dir}/audio.mp3'],
+                args=[ffmpeg_path, '-i', f'{saved_dir}/{filename}', '-q:a', '0', '-map', 'a', f'{saved_dir}/audio.mp3'],
                 capture_output=True,
                 shell=True,
                 check=True
