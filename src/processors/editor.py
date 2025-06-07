@@ -58,10 +58,13 @@ class VideoEditor():
             self.logger.log_file_only(f'Fatal Error Requests {e}', LoggingLevel.Fatal)
             
             return 'Viral Song'
+        
+    def generate_suffix(self):
+        return f" {round(self.config_loader.get_final_video_duration())} Hour looped"
 
     def generate_output_filename(self, yt_title: str) -> str:
         sanitized_title = re.sub(r'[^a-zA-Z0-9_]', ' ', yt_title)
-        suffix = " 1 Hour looped"
+        suffix = self.generate_suffix()
         youtube_title_limit = 100
         required_title_length = youtube_title_limit - len(suffix)
 

@@ -31,7 +31,6 @@ def main():
     links = video_downloader.get_links_from_file()
 
     for index, link in enumerate(links):
-        
         if index == len(links) - 1:
             break
 
