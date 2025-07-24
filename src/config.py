@@ -172,7 +172,6 @@ class ConfigLoader:
             proc = subprocess.run(
                 [ytdlp_path, '--version'],
                 capture_output=True,
-                shell=True,
                 check=True
             )
 

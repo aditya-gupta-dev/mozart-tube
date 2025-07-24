@@ -6,3 +6,4 @@ files
 output
 *.mp4
 *.json
+client_secrets.json

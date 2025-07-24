@@ -1,12 +1,11 @@
 from src.config import ConfigLoader
 from src.logger import Logger, LoggingLevel
-import requests
 import re 
 import os 
 import subprocess
 import math
 import time
-import requests 
+import requests
 
 class VideoEditor():
     def __init__(self, link: str, logger: Logger, configLoader: ConfigLoader):
