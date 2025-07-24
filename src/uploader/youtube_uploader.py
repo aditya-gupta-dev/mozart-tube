@@ -1,5 +1,4 @@
 import os
-import json
 from src.config import ConfigLoader
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -7,8 +6,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from googleapiclient.errors import HttpError
-from tqdm import tqdm
-import time
+from progress.bar import Bar
 from src.logger import Logger, LoggingLevel
 
 class YouTubeUploader:
@@ -19,6 +17,7 @@ class YouTubeUploader:
         self.token_file = token_file
         self.scopes = ['https://www.googleapis.com/auth/youtube.upload']
         self.youtube = None
+        self.upload_speed = 5 * 1024 * 1024 # upload speed (size of each chunk)
 
         if not os.path.exists(self.client_secrets_file):
             self.logger.log_file_with_stdout(f'client_secrets.json not found : searhed at [ {self.client_secrets_file} ]', LoggingLevel.Error)
@@ -106,8 +105,12 @@ class YouTubeUploader:
             }
         }
         
-        # Create media upload object
-        media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
+        # Create media upload object with 5mbps upload speed
+        media = MediaFileUpload(
+            video_file,
+            chunksize=self.upload_speed,
+            resumable=True
+        )
         
         try:
             # Execute upload request
@@ -117,9 +120,29 @@ class YouTubeUploader:
                 media_body=media
             )
             
+            response = None
+
             self.logger.log_file_with_stdout(f"Starting upload of '{title}' ({self._format_bytes(file_size)})", LoggingLevel.Info)
-            response = self._resumable_upload_with_progress(insert_request, total_size=file_size)
+
+            with Bar("Uploading", max=1, suffix='%(percent).1f%% - %(eta)ds') as progress_bar:            
+                while response is None:
+                    status, response = insert_request.next_chunk()
+
+                    if status is None:
+                        break 
+
+                    current_progress = status.progress()
+
+                    progress_bar.next(current_progress)
+                    self.logger.log_file_only(f'Upload progress: {current_progress}, Response : {response}', LoggingLevel.Info)
+                
+                progress_bar.finish()
+
+            if response == None:
+                self.logger.log_file_with_stdout(f'Video Upload probably failed as Response: {response}', LoggingLevel.Error)
+                return None
             
+            self.logger.log_file_only(f'Response object: {response}', LoggingLevel.Info)
             self.logger.log_file_with_stdout(f"Video '{title}' uploaded successfully. Video ID: {response['id']}", LoggingLevel.Info)
             self.logger.log_file_with_stdout(f"URL: https://www.youtube.com/watch?v={response['id']}", LoggingLevel.Info)
 
@@ -137,47 +160,47 @@ class YouTubeUploader:
             
             return None 
         
-    def _resumable_upload_with_progress(self, insert_request, total_size):
-        """Handle resumable upload with tqdm progress bar"""
-        response = None
-        error = None
+    # def _resumable_upload_with_progress(self, insert_request, total_size):
+    #     """Handle resumable upload with tqdm progress bar"""
+    #     response = None
+    #     error = None
         
-        try:
-            while response is None:
-                try:
-                    status, response = insert_request.next_chunk()
-                    if status:
-                        # Update progress bar
-                        current_progress = int(status.resumable_progress)
-                        progress_increment = current_progress - last_progress
-                        self.logger.log_file_only(f'Upload progress {progress_increment}', LoggingLevel.Info)
-                        last_progress = current_progress
+    #     try:
+    #         while response is None:
+    #             try:
+    #                 status, response = insert_request.next_chunk()
+    #                 if status:
+    #                     # Update progress bar
+    #                     current_progress = int(status.resumable_progress)
+    #                     progress_increment = current_progress - last_progress
+    #                     self.logger.log_file_only(f'Upload progress {progress_increment}', LoggingLevel.Info)
+    #                     last_progress = current_progress
                         
-                except HttpError as e:
-                    if e.resp.status in [500, 502, 503, 504]:
-                        error = f"Retriable HTTP error {e.resp.status}: {e.content}"
-                        self.logger.log_file_only(f'Error while uploading file check your connection !', LoggingLevel.Error)
-                        self.logger.log_file_only(f'Upload Error :{error}', LoggingLevel.Error)
-                    else:
-                        raise
-                except Exception as e:
-                    error = f"Retriable error: {e}"
+    #             except HttpError as e:
+    #                 if e.resp.status in [500, 502, 503, 504]:
+    #                     error = f"Retriable HTTP error {e.resp.status}: {e.content}"
+    #                     self.logger.log_file_only(f'Error while uploading file check your connection !', LoggingLevel.Error)
+    #                     self.logger.log_file_only(f'Upload Error :{error}', LoggingLevel.Error)
+    #                 else:
+    #                     raise
+    #             except Exception as e:
+    #                 error = f"Retriable error: {e}"
                 
-                if error is not None:
-                    retry += 1
-                    if retry > 3:
-                        raise Exception("Maximum retry attempts exceeded")
+    #             if error is not None:
+    #                 retry += 1
+    #                 if retry > 3:
+    #                     raise Exception("Maximum retry attempts exceeded")
                     
-                    # Exponential backoff
-                    wait_time = 2 ** retry
-                    time.sleep(wait_time)
-                    error = None
+    #                 # Exponential backoff
+    #                 wait_time = 2 ** retry
+    #                 time.sleep(wait_time)
+    #                 error = None
             
-        except Exception as e:
-            self.logger.log_file_only(f'Error while uploading file check your connection !', LoggingLevel.Error)
-            self.logger.log_file_only(f'Upload Error :{e}', LoggingLevel.Error)
+    #     except Exception as e:
+    #         self.logger.log_file_only(f'Error while uploading file check your connection !', LoggingLevel.Error)
+    #         self.logger.log_file_only(f'Upload Error :{e}', LoggingLevel.Error)
         
-        return response
+    #     return response
     
     def upload_thumbnail(self, video_id, thumbnail_path):
         """Upload thumbnail for a video."""

@@ -3,6 +3,7 @@ from src.config import ConfigLoader
 import re 
 import os 
 import subprocess
+import src.utils as utils 
 
 class VideoDownloader:
     def __init__(self, logger: Logger, configLoader: ConfigLoader):
@@ -10,6 +11,7 @@ class VideoDownloader:
         self.logger = logger
         self.config_loader = configLoader
         self.temp_directory = "files"
+        self.is_windows = utils.is_windows()
 
         try:
             output_dir = self.config_loader.get_output_directory()
@@ -59,7 +61,7 @@ class VideoDownloader:
             process = subprocess.run(
                 [yt_dlp_path, link, '--output', f'{self.temp_directory}/%(id)s/input.%(ext)s'],
                 capture_output=True,
-                shell=True,
+                shell=self.is_windows,
                 check=True   
             )
             

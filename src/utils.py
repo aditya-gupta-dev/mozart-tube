@@ -1,4 +1,5 @@
 import re 
+import platform
 
 def generate_output_filename(yt_title: str) -> str:
     sanitized_title = re.sub(r'[^a-zA-Z0-9_]', ' ', yt_title)
@@ -10,6 +11,9 @@ def generate_output_filename(yt_title: str) -> str:
         return f"{sanitized_title[:required_title_length]} {suffix}"
     else:
         return f"{sanitized_title} {suffix}"
+    
+def is_windows() -> bool:
+    return platform.system() == "Windows"
     
 def print_title():
     print("""

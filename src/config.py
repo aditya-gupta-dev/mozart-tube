@@ -5,12 +5,14 @@ import json
 import subprocess
 
 from src.logger import Logger, LoggingLevel
+import src.utils as utils
 
 class ConfigLoader:
     def __init__(self, logger: Logger):
         self.pwd=Path().cwd()
         self.default_config_path=f"{self.pwd}/config.json"
         self.config_data = None
+        self.is_windows = utils.is_windows()
 
 
         logger.log_file_with_stdout(
@@ -136,7 +138,7 @@ class ConfigLoader:
             proc = subprocess.run(
                 [ffmpeg_path, '-version'],
                 capture_output=True,
-                shell=True,
+                shell=self.is_windows,
                 check=True
             )
 
@@ -172,6 +174,7 @@ class ConfigLoader:
             proc = subprocess.run(
                 [ytdlp_path, '--version'],
                 capture_output=True,
+                shell=self.is_windows,
                 check=True
             )
 

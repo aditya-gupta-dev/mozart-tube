@@ -6,6 +6,7 @@ import subprocess
 import math
 import time
 import requests
+import src.utils as utils
 
 class VideoEditor():
     def __init__(self, link: str, logger: Logger, configLoader: ConfigLoader):
@@ -15,6 +16,7 @@ class VideoEditor():
         self.already_as_mp4 = False
         self.final_output_video_duration: int = 30
         self.config_loader = configLoader
+        self.is_windows = utils.is_windows()
         self.video_id = self.get_video_id()
         self.logger.log_file_with_stdout(f'Started Editing [ {self.video_id} ]', LoggingLevel.Info)
 
@@ -106,7 +108,7 @@ class VideoEditor():
             process = subprocess.run(
                 args=[ffmpeg_path, '-i', f'{saved_dir}/input.webm', '-c', 'copy', f'{saved_dir}/output.mp4'],
                 capture_output=True,
-                shell=True,
+                shell=self.is_windows,
                 check=True
             )
 
@@ -156,7 +158,7 @@ class VideoEditor():
             process = subprocess.run(
                 args=[ffmpeg_path, '-i', f'{saved_dir}/{filename}', '-q:a', '0', '-map', 'a', f'{saved_dir}/audio.mp3'],
                 capture_output=True,
-                shell=True,
+                shell=self.is_windows,
                 check=True
             )
 
@@ -201,7 +203,7 @@ class VideoEditor():
             process = subprocess.run(   
                 args=[ffmpeg_path, '-i', asset_video_path, '-i', f'{saved_dir}/audio.mp3', '-c:v', 'copy', '-c:a', 'aac', f'{saved_dir}/final_output.mp4'],
                 capture_output=True,
-                shell=True,
+                shell=self.is_windows,
                 check=True
             )
 
@@ -287,7 +289,7 @@ class VideoEditor():
             process = subprocess.run(   
                 args=[ffmpeg_path, '-f', 'concat', '-safe', '0', '-i', f'{saved_dir}/files.txt', '-c', 'copy', f'{output_dir}/{self.video_id}/{filename}.mp4'],
                 capture_output=True,
-                shell=True,
+                shell=self.is_windows,
                 check=True
             )
 
@@ -359,7 +361,7 @@ class VideoEditor():
             process = subprocess.run(
                 args=[ffprobe_path, '-v', 'quiet', '-show_entries', 'format=duration', '-of', 'csv=p=0', f'{saved_dir}/final_output.mp4'],
                 capture_output=True,
-                shell=True,
+                shell=self.is_windows,
                 check=True
             )
 

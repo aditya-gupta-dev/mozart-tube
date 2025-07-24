@@ -2,7 +2,7 @@
     "ffmpegPath": null,
     "ytdlpPath": null,
     "youtube-api-key": "YOUR_API_KEY",
-    "final-video-duration": 3600,
+    "final-video-duration": 360,
     "asset-video-path": "sample.mp4",
     "output-directory": "output",
     "links-file-path": "links.txt"
