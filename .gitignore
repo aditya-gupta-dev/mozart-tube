@@ -7,3 +7,4 @@ output
 *.mp4
 *.json
 client_secrets.json
+test.py

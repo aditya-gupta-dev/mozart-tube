@@ -5,8 +5,12 @@ from src.logger import Logger
 from src.uploader.youtube_uploader import YouTubeUploader
 from src.uploader.uploader import Uploader
 from src.utils import print_title
+from src.cleaner import start_cleaner, is_cleaner_arg_passed
 
 def main():
+
+    if is_cleaner_arg_passed():
+        exit(start_cleaner())
 
     print_title()
 
