@@ -1,6 +1,7 @@
 import re 
 import os 
 import platform
+import urllib.parse as url_parser
 
 def generate_output_filename(yt_title: str) -> str:
     sanitized_title = re.sub(r'[^a-zA-Z0-9_]', ' ', yt_title)
@@ -16,6 +17,12 @@ def generate_output_filename(yt_title: str) -> str:
 def is_windows() -> bool:
     return platform.system() == "Windows"
 
+def is_valid_url(link: str) -> bool:
+    try: 
+        url_parser.urlparse(link)
+        return True 
+    except Exception:
+        return False 
 
 def get_folder_size(directory: str): 
     total_size = 0

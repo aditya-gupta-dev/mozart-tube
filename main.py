@@ -1,10 +1,10 @@
 from src.processors.editor import VideoEditor
 from src.processors.downloader import VideoDownloader
 from src.config import ConfigLoader
-from src.logger import Logger
+from src.logger import Logger, LoggingLevel
 from src.uploader.youtube_uploader import YouTubeUploader
 from src.uploader.uploader import Uploader
-from src.utils import print_title
+from src.utils import print_title, is_valid_url
 import src.cleaner as cleaner
 
 def main():
@@ -41,6 +41,10 @@ def main():
     for index, link in enumerate(links):
         if index == len(links) - 1:
             break
+
+        if not is_valid_url(link):
+            logger.log_file_with_stdout(f'Not a valid url [ {link} ]. Skipping...', LoggingLevel.Info)
+            continue
 
         video_downloader.download_video(link)
 

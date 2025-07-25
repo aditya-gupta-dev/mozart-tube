@@ -54,6 +54,12 @@ class VideoDownloader:
     
     def download_video(self, link: str):
         yt_dlp_path = self.config_loader.get_yt_dlp_path()
+        video_id = self.get_video_id(link)
+
+        if os.path.exists(f'{self.temp_directory}/{video_id}/input.webm') or os.path.exists(f'{self.temp_directory}/{video_id}/input.webm'):
+            self.logger.log_file_with_stdout(f'downloaded video is already present. Skipping Downloading...', LoggingLevel.Info)
+            return 
+        
         try:
             print() # just a line break
             self.logger.log_file_with_stdout(f'Started Downloading {link}', LoggingLevel.Info)

@@ -61,7 +61,7 @@ class VideoEditor():
             return 'Viral Song'
         
     def generate_suffix(self):
-        return f" {round(self.config_loader.get_final_video_duration())} Hour looped"
+        return f" {round(self.config_loader.get_final_video_duration()/3600)} Hour looped"
 
     def generate_output_filename(self, yt_title: str) -> str:
         sanitized_title = re.sub(r'[^a-zA-Z0-9_]', ' ', yt_title)
