@@ -1,5 +1,6 @@
 import sys
 import os 
+import shutil
 import src.utils as utils
 import src.config as config 
 
@@ -50,7 +51,7 @@ def start_cleaner(config_loader: config.ConfigLoader) -> int:
     if os.path.exists(output_dir) and os.path.isdir(output_dir):
         folder_size = utils.format_bytes(utils.get_folder_size(output_dir))
         print(f'Removing output folder [{folder_size}] [{output_dir}]')
-        os.removedirs(output_dir)
+        shutil.rmtree(output_dir)
     else:
         print(f'output folder was not found: checked at [{output_dir}]')
 
@@ -58,8 +59,20 @@ def start_cleaner(config_loader: config.ConfigLoader) -> int:
     if os.path.exists(files_dir) and os.path.isdir(files_dir):
         folder_size = utils.format_bytes(utils.get_folder_size(files_dir))
         print(f'Removing files folder: [{folder_size}] [{folder_size}]')
-        os.removedirs(files_dir)
+        shutil.rmtree(files_dir)
     else:
         print(f'file folder was not found: checked at [{files_dir}]')
+
+    enteries, count = os.listdir('.'), 0
+    for entry in enteries:
+        if entry.endswith('.log'):
+            print(f'removing log file: {entry}')
+            os.remove(entry)
+            count = count + 1 
+
+    if count == 0:
+        print('no log files were present')
+    else:
+        print(f'removed a total of {count} log files')
     
     return 0
