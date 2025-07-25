@@ -1,7 +1,7 @@
 import sys
 import os 
 import src.utils as utils
-
+import src.config as config 
 
 clean_flag = '--clean'
 reset_flag = '--reset'
@@ -18,7 +18,7 @@ def is_cleaner_arg_passed() -> bool:
 
     return sys.argv[1] == clean_flag
 
-def start_reset(config_loader: ConfigLoader) -> int:
+def start_reset(config_loader: config.ConfigLoader) -> int:
     print(f'Passed Args: {sys.argv}')
     print('Starting reset')
 
@@ -40,7 +40,7 @@ def start_reset(config_loader: ConfigLoader) -> int:
 
     return start_cleaner(config_loader) 
 
-def start_cleaner(config_loader: ConfigLoader) -> int:
+def start_cleaner(config_loader: config.ConfigLoader) -> int:
     print(f'Passed Args: {sys.argv}')
     print('Starting cleaner')
 
@@ -50,7 +50,7 @@ def start_cleaner(config_loader: ConfigLoader) -> int:
     if os.path.exists(output_dir) and os.path.isdir(output_dir):
         folder_size = utils.format_bytes(utils.get_folder_size(output_dir))
         print(f'Removing output folder [{folder_size}] [{output_dir}]')
-        os.remove(output_dir)
+        os.removedirs(output_dir)
     else:
         print(f'output folder was not found: checked at [{output_dir}]')
 
@@ -58,7 +58,7 @@ def start_cleaner(config_loader: ConfigLoader) -> int:
     if os.path.exists(files_dir) and os.path.isdir(files_dir):
         folder_size = utils.format_bytes(utils.get_folder_size(files_dir))
         print(f'Removing files folder: [{folder_size}] [{folder_size}]')
-        os.remove(files_dir)
+        os.removedirs(files_dir)
     else:
         print(f'file folder was not found: checked at [{files_dir}]')
     
