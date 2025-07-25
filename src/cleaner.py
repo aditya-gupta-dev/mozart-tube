@@ -1,7 +1,7 @@
 import sys
 import os 
 import src.utils as utils
-from src.config import ConfigLoader
+
 
 clean_flag = '--clean'
 reset_flag = '--reset'
