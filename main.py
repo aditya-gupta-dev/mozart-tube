@@ -5,18 +5,22 @@ from src.logger import Logger
 from src.uploader.youtube_uploader import YouTubeUploader
 from src.uploader.uploader import Uploader
 from src.utils import print_title
-from src.cleaner import start_cleaner, is_cleaner_arg_passed
+import src.cleaner as cleaner
 
 def main():
-
-    if is_cleaner_arg_passed():
-        exit(start_cleaner())
 
     print_title()
 
     logger = Logger()
     
     config_loader = ConfigLoader(logger=logger)
+
+    if cleaner.is_reset_arg_passed():
+        exit(cleaner.start_reset(config_loader))
+
+    if cleaner.is_cleaner_arg_passed():
+        exit(cleaner.start_cleaner(config_loader))
+
     config_loader.check_for_ffmpeg(logger=logger)
     config_loader.check_for_yt_dlp(logger=logger)
 
