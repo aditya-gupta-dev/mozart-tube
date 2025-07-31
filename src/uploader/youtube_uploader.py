@@ -124,7 +124,7 @@ class YouTubeUploader:
 
             self.logger.log_file_with_stdout(f"Starting upload of '{title}' ({self._format_bytes(file_size)})", LoggingLevel.Info)
 
-            with Bar("Uploading", max=100, suffix='%(percent).1f%% - %(eta)ds') as progress_bar:            
+            with Bar("Uploading", max=100, suffix='%(percent).1f%% - %(eta)ds') as progress_bar:
                 previous_progress = 0 
                 while response is None:
                     status, response = insert_request.next_chunk()
@@ -132,11 +132,13 @@ class YouTubeUploader:
                     if status is None:
                         break 
 
-                    current_progress = status.progress() - previous_progress
+                    progress = int(status.progress() * 100) 
+                    current_progress = progress - previous_progress
 
-                    progress_bar.next(round(current_progress*100))
-                    self.logger.log_file_only(f'Upload progress: {current_progress}, bar progress: {round(current_progress*100)}, Response : {response}', LoggingLevel.Info)
-                    previous_progress = current_progress
+                    progress_bar.next(current_progress)
+                    self.logger.log_file_only(f'Upload progress: {progress}, bar progress: {current_progress}, prev progresss: {previous_progress}, progress: {status.progress()}, Response : {response}', LoggingLevel.Info)
+
+                    previous_progress = progress 
 
                 progress_bar.finish()
 
