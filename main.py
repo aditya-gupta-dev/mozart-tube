@@ -46,7 +46,7 @@ def main():
             logger.log_file_with_stdout(f'Not a valid url [ {link} ]. Skipping...', LoggingLevel.Info)
             continue
 
-        video_downloader.download_video(link)
+        video_downloader.download_video_using_pkg(link)
 
         video_editor = VideoEditor(
             link=link, 

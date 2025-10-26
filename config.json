@@ -1,9 +1,9 @@
 {
     "ffmpegPath": null,
     "ytdlpPath": null,
-    "youtube-api-key":"",
-    "final-video-duration": 3600,
+    "youtube-api-key":"AIzaSyBrk7G_SP9LnFusEavjNmVifC5cISCrCY8",
+    "final-video-duration": 36000,
     "asset-video-path": "sample.mp4",
     "output-directory": "output",
-    "links-file-path": "phonks.txt"
+    "links-file-path": "links.txt"
 }

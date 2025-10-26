@@ -4,6 +4,7 @@ import re
 import os 
 import subprocess
 import src.utils as utils 
+import yt_dlp
 
 class VideoDownloader:
     def __init__(self, logger: Logger, configLoader: ConfigLoader):
@@ -87,3 +88,19 @@ class VideoDownloader:
         except Exception as e:
             self.logger.log_file_with_stdout(f'Fatal error, quitting.', LoggingLevel.Fatal)
             self.logger.log_file_only(f'Error {e}.', LoggingLevel.Fatal)
+
+    def download_video_using_pkg(self, link: str): 
+        video_id = self.get_video_id(link)
+
+        save_path = f'{self.temp_directory}/{video_id}/input.webm'
+
+        if os.path.exists(save_path):
+            self.logger.log_file_with_stdout(f'downloaded video is already present. Skipping Downloading...', LoggingLevel.Info)
+            return 
+        
+        yt_opts = { 
+            'outtmpl': save_path,   
+        }
+
+        with yt_dlp.YoutubeDL(yt_opts) as downloader: 
+            downloader.download([video_id])
