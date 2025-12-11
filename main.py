@@ -6,6 +6,7 @@ from src.uploader.youtube_uploader import YouTubeUploader
 from src.uploader.uploader import Uploader
 from src.utils import print_title, is_valid_url
 import src.cleaner as cleaner
+import src.randomizer as randomizer 
 
 def main():
 
@@ -20,6 +21,9 @@ def main():
 
     if cleaner.is_cleaner_arg_passed():
         exit(cleaner.start_cleaner(config_loader))
+    
+    if randomizer.is_randomizer_arg_passed(): 
+        randomizer.upload_existing_videos()
 
     config_loader.check_for_ffmpeg(logger=logger)
     config_loader.check_for_yt_dlp(logger=logger)
