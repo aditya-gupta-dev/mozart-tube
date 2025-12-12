@@ -1,8 +1,8 @@
 from .logger import Logger, LoggingLevel
 from .config import ConfigLoader
 from .uploader.youtube_uploader import YouTubeUploader
-from .uploader.uploader import Uploader 
-from .processors.editor import VideoEditor 
+from .uploader.uploader import Uploader
+from .processors.editor import VideoEditor
 
 import sys
 from enum import Enum
@@ -69,9 +69,9 @@ class Randomizer:
     def get_videos_according_to_usage_mode(self) -> list[str]:
         self.config_loader.check_for_ffmpeg(self.logger)
         self.config_loader.check_for_yt_dlp(self.logger)
-        
+
         videos: list[str] = []
-        
+
         if self.usage_mode == RandomizerUsageMode.ALL:
             videos = self.__get_all_videos()
         if self.usage_mode == RandomizerUsageMode.RANDOMLY_ONE:
@@ -80,55 +80,59 @@ class Randomizer:
             videos = self.__get_randomly_few_videos()
         else:
             videos = self.__get_one_video()
-        
-        self.logger.log_file_with_stdout(f'Selected Mode: {self.usage_mode.name}', LoggingLevel.Info)
-        self.logger.log_file_with_stdout(f'proceeding with videos: {videos}', LoggingLevel.Info)
+
+        self.logger.log_file_with_stdout(
+            f"Selected Mode: {self.usage_mode.name}", LoggingLevel.Info
+        )
+        self.logger.log_file_with_stdout(
+            f"proceeding with videos: {videos}", LoggingLevel.Info
+        )
         return videos
 
-    def start_editing(self, videos: list[str]): 
-        for vid in videos: 
-            editor = VideoEditor(link=vid, logger=self.logger, configLoader=self.config_loader)
+    def start_editing(self, videos: list[str]):
+        for vid in videos:
+            editor = VideoEditor(
+                link=vid, logger=self.logger, configLoader=self.config_loader
+            )
             editor.edit()
 
     def start_uploading_to_youtube(self):
-        
         youtube_uploader = YouTubeUploader(
-                logger=self.logger,
-                config_loader=self.config_loader, 
-            )
-        
+            logger=self.logger,
+            config_loader=self.config_loader,
+        )
+
         youtube_uploader.authenticate()
-        
+
         uploader = Uploader(
             logger=self.logger,
-            config_loader=self.config_loader, 
+            config_loader=self.config_loader,
             youtube_uploader=youtube_uploader,
         )
-        
-        uploader.start_uploading_to_youtube()                
-             
+
+        uploader.start_uploading_to_youtube()
 
     def __get_all_videos(self) -> list[str]:
         videos: list[str] = []
         enteries = os.listdir(self.temp_directory)
         for entry in enteries:
             path = Path(os.path.join(self.temp_directory, entry))
-            if path.is_dir(): 
-                videos.append(f'https://youtu.be/{entry}')
-    
+            if path.is_dir():
+                videos.append(f"https://youtu.be/{entry}")
+
         return videos
 
     def __get_randomly_few_videos(self) -> list[str]:
         videos: list[str] = self.__get_all_videos()
         few_videos: list[str] = []
-        for _ in range(random.randint(1, len(videos)-1)): 
-            few_videos.append(videos[random.randint(0, len(videos)-1)])
+        for _ in range(random.randint(1, len(videos) - 1)):
+            few_videos.append(videos[random.randint(0, len(videos) - 1)])
         return few_videos
 
     def __get_one_video(self) -> list[str]:
         videos: list[str] = self.__get_all_videos()
-        return [videos[random.randint(0, len(videos)-1)]]
-        
+        return [videos[random.randint(0, len(videos) - 1)]]
+
 
 # def upload_existing_videos(usage_mode: RandomizerUsageMode, logger: Logger, config_loader:ConfigLoader ) -> int:
 #     logger.log_file_with_stdout(f'Started Randomizer Upload: with usage mode {usage_mode.name}={usage_mode.value}', LoggingLevel.Info)

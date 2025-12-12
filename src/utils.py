@@ -15,6 +15,7 @@ def generate_output_filename(yt_title: str) -> str:
     else:
         return f"{sanitized_title} {suffix}"
 
+
 def is_windows() -> bool:
     return platform.system() == "Windows"
 
@@ -72,5 +73,6 @@ def print_title():
 ..:::::..:::.......:::........::..:::::..::..:::::..:::::..::::::::..::::::.......:::........:::........::
 """)
 
-def print_help(): 
-    print('randomizer=')
+
+def print_help():
+    print("randomizer=")

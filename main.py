@@ -27,7 +27,9 @@ def main():
         if error != "":
             logger.log_file_with_stdout(error, LoggingLevel.Warn)
         random_uploader = randomizer.Randomizer(usage_mode, logger, config_loader)
-        random_uploader.start_editing(random_uploader.get_videos_according_to_usage_mode())
+        random_uploader.start_editing(
+            random_uploader.get_videos_according_to_usage_mode()
+        )
         random_uploader.start_uploading_to_youtube()
         exit(0)
 
