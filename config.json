@@ -1,7 +1,7 @@
 {
     "ffmpegPath": null,
     "ytdlpPath": null,
-    "youtube-api-key":"",
+    "youtube-api-key":"AIoaksdsad",
     "final-video-duration": 36000,
     "asset-video-path": "sample.mp4",
     "output-directory": "output",

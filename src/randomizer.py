@@ -1,8 +1,8 @@
-from logger import Logger
+from .logger import Logger
 import sys
 from enum import Enum
 
-randomizer = "--randomize"
+randomizer_flag = "--randomizer"
 
 
 class RandomizerUsageMode(Enum):
@@ -15,7 +15,7 @@ def is_randomizer_arg_passed() -> bool:
     if len(sys.argv) < 2:
         return False
 
-    return sys.argv[1] == randomizer
+    return randomizer_flag in sys.argv[1]
 
 
 def parse_randomizer_arg() -> tuple[RandomizerUsageMode, str]:
@@ -30,11 +30,11 @@ def parse_randomizer_arg() -> tuple[RandomizerUsageMode, str]:
 
     try:
         usage_mode = int(items[1].strip())
-        if usage_mode == RandomizerUsageMode.ALL:
+        if usage_mode == 1:
             return (RandomizerUsageMode.ALL, "")
-        if usage_mode == RandomizerUsageMode.RANDOMLY_ONE:
+        if usage_mode == 2:
             return (RandomizerUsageMode.RANDOMLY_ONE, "")
-        if usage_mode == RandomizerUsageMode.RANDOMLY_SELECT_FEW:
+        if usage_mode == 3:
             return (RandomizerUsageMode.RANDOMLY_SELECT_FEW, "")
         else:
             return (
