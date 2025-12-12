@@ -4,7 +4,7 @@ venv
 *.log
 files
 output
-*.mp4
+# *.mp4
 *.json
 client_secrets.json
 test.py

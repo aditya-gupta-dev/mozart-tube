@@ -5,11 +5,17 @@ from src.logger import Logger, LoggingLevel
 from src.uploader.youtube_uploader import YouTubeUploader
 from src.uploader.uploader import Uploader
 from src.utils import print_title, is_valid_url
+from src.help import is_help_arg_passed, print_help
 import src.cleaner as cleaner
 import src.randomizer as randomizer
 
 
 def main():
+
+    if is_help_arg_passed(): 
+        print_help()
+        exit(0)
+
     print_title()
 
     logger = Logger()
