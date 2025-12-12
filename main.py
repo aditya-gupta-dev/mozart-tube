@@ -25,10 +25,8 @@ def main():
     if randomizer.is_randomizer_arg_passed():
         (usage_mode, error) = randomizer.parse_randomizer_arg()
         if error != "":
-            logger.log_file_with_stdout(error, LoggingLevel.Error)
-            exit(1)
-        else:
-            exit(randomizer.upload_existing_videos(usage_mode, logger))
+            logger.log_file_with_stdout(error, LoggingLevel.Warn)
+        exit(randomizer.upload_existing_videos(usage_mode, logger, config_loader))
 
     config_loader.check_for_ffmpeg(logger=logger)
     config_loader.check_for_yt_dlp(logger=logger)
