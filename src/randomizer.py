@@ -73,19 +73,16 @@ class Randomizer:
         videos: list[str] = []
         
         if self.usage_mode == RandomizerUsageMode.ALL:
-            self.logger.log_file_with_stdout(f'Selected {self.usage_mode.name} upload mode.', LoggingLevel.Debug)
             videos = self.__get_all_videos()
         if self.usage_mode == RandomizerUsageMode.RANDOMLY_ONE:
-            self.logger.log_file_with_stdout(f'Selected {self.usage_mode.name} upload mode.', LoggingLevel.Debug)
             videos = self.__get_one_video()
         if self.usage_mode == RandomizerUsageMode.RANDOMLY_SELECT_FEW:
-            self.logger.log_file_with_stdout(f'Selected {self.usage_mode.name} upload mode.', LoggingLevel.Debug)
             videos = self.__get_randomly_few_videos()
         else:
-            self.logger.log_file_with_stdout(f'Selected {self.usage_mode.name} upload mode.', LoggingLevel.Debug)
             videos = self.__get_one_video()
         
-        self.logger.log_file_with_stdout(f'proceeding with videos: {videos}', LoggingLevel.Debug)
+        self.logger.log_file_with_stdout(f'Selected Mode: {self.usage_mode.name}', LoggingLevel.Info)
+        self.logger.log_file_with_stdout(f'proceeding with videos: {videos}', LoggingLevel.Info)
         return videos
 
     def start_editing(self, videos: list[str]): 
@@ -94,13 +91,18 @@ class Randomizer:
             editor.edit()
 
     def start_uploading_to_youtube(self):
+        
+        youtube_uploader = YouTubeUploader(
+                logger=self.logger,
+                config_loader=self.config_loader, 
+            )
+        
+        youtube_uploader.authenticate()
+        
         uploader = Uploader(
             logger=self.logger,
             config_loader=self.config_loader, 
-            youtube_uploader=YouTubeUploader(
-                logger=self.logger,
-                config_loader=self.config_loader, 
-            ),
+            youtube_uploader=youtube_uploader,
         )
         
         uploader.start_uploading_to_youtube()                
