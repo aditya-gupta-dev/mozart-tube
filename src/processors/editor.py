@@ -46,7 +46,7 @@ class VideoEditor:
                     LoggingLevel.Error,
                 )
                 self.logger.log_file_with_stdout(
-                    f"Returning default name : <Viral song 1 hour looped>"
+                    f"Returning default name : <Viral song 1 hour looped>",
                 )
 
                 return "Viral Song"
